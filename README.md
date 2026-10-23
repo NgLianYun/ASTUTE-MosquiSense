@@ -34,7 +34,7 @@ MosquiSense/
 │   ├── requirements.txt
 │   ├── .env.example             # Configuration template
 │   └── input/Q-001.jpg          # Manually provided sample image
-├── firmware/MosquiSenseCode.ino #Arduino firmware for hardware control
+├── firmware/MosquiSenseCode.ino # Arduino firmware for hardware control
 ├── supabase/schema.sql          # Fresh-project database setup
 ├── download_small_osm.py        # Map data download utility
 ├── build_geofabrik.py           # Map data processing utility
