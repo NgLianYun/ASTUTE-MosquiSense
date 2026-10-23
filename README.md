@@ -1,140 +1,95 @@
 # MosquiSense — AI-Based Mosquito Monitoring System
 
-MosquiSense is a smart mosquito monitoring prototype that integrates **Roboflow image detection, a Python backend, Supabase database, and an interactive HTML dashboard**.
+MosquiSense is a proposed solar-powered mosquito capture and monitoring product for public spaces. Its current **software prototype** combines a Roboflow mosquito detection workflow, a Python backend, a Supabase database and an interactive HTML dashboard.
 
-The proposed product is a solar-powered mosquito killer designed to attract, capture, and monitor mosquitoes in public spaces.
+## How the system works
 
-## 1. System Overview
+**Sample mosquito image → Roboflow AI → Python backend → Supabase `live_data` → HTML dashboard**
 
-The current software prototype follows this workflow:
+1. A sample photo is placed manually in `backend/input/Q-001.jpg`.
+2. The Roboflow model identifies mosquitoes in the photo and returns a detection count.
+3. `mosquisense_worker.py` updates the **Q-001** record in the Supabase `public.live_data` table.
+4. The dashboard in `index.html` reads the latest station data directly from Supabase and displays mosquito counts, station details, map markers and activity rankings.
 
-**Mosquito Image → Roboflow AI → Python Backend → Supabase → MosquiSense Dashboard**
+### Live dashboard updates
 
-A sample image is manually provided to the AI model. The detected mosquito count is sent to Supabase and displayed on the monitoring dashboard.
+The dashboard is built with **HTML, CSS and JavaScript** and connected to Supabase. When a station's `mosquito_count` changes in `live_data`, the dashboard can refresh **without manually reloading the web page**:
 
-## 2. Project Structure
+- **Supabase Realtime** listens for database changes.
+- A **30-second polling fallback** periodically requests the latest readings if a Realtime event is missed or unavailable.
+- The dashboard refreshes displayed counts, activity categories and rankings from the latest received values.
+
+**Realtime means that the webpage reacts to database updates; it does not mean the camera captures images automatically.** In the current prototype, the user manually provides an image and runs the Python worker. Only **Q-001** has been tested with the Roboflow-to-Supabase pipeline; other station readings are demonstration data.
+
+## Project files
 
 ```text
 MosquiSense/
-├── index.html
-├── map-data.js
+├── index.html                 # HTML monitoring dashboard
+├── map-data.js                # Map data
 ├── backend/
-│   ├── mosquisense_worker.py
-│   ├── test_roboflow.py
-│   ├── app.py
+│   ├── mosquisense_worker.py  # Roboflow detection → Supabase update
+│   ├── test_roboflow.py       # Detection test and annotated image
+│   ├── app.py                 # Flask detection API
 │   ├── requirements.txt
-│   ├── .env.example
-│   └── input/
-│       └── Q-001.jpg
-├── supabase/
-├── download_small_osm.py
-├── build_geofabrik.py
-├── .gitignore
+│   ├── .env.example           # Configuration template
+│   └── input/Q-001.jpg        # Manually provided sample image
+├── supabase/schema.sql        # Fresh-project database setup
+├── download_small_osm.py     # Map data download utility
+├── build_geofabrik.py        # Map data processing utility
 └── README.md
 ```
 
-### Main Components
+## Run the prototype
 
-| File | Description |
-|---|---|
-| `index.html` | Interactive MosquiSense monitoring dashboard |
-| `map-data.js` | Geographic data for the monitoring map |
-| `backend/mosquisense_worker.py` | Detects mosquitoes and updates Supabase |
-| `backend/test_roboflow.py` | Tests AI detection and generates bounding boxes |
-| `backend/app.py` | Flask-based image detection API |
-| `backend/requirements.txt` | Python dependencies |
-| `supabase/` | Database setup and related SQL files |
-| `download_small_osm.py` | Downloads OpenStreetMap data |
-| `build_geofabrik.py` | Processes map data |
-
-## 3. Technologies Used
-
-- **Frontend:** HTML, CSS, JavaScript
-- **Machine Learning:** Roboflow
-- **Backend:** Python and Flask
-- **Database:** Supabase PostgreSQL
-- **Mapping:** OpenStreetMap
-- **Version Control:** GitHub
-
-## 4. Installation and Setup
-
-### Install Python dependencies
-
-Open a terminal in the project folder:
+**1. Install backend dependencies**
 
 ```bash
 cd backend
 pip install -r requirements.txt
 ```
 
-### Configure environment variables
+**2. Configure `backend/.env`** using the values required by your Supabase project and Roboflow workflow:
 
-Create a `.env` file inside `backend/`:
-
-```env
+```dotenv
 ROBOFLOW_API_KEY=YOUR_ROBOFLOW_API_KEY
 SUPABASE_URL=https://YOUR_PROJECT.supabase.co
 SUPABASE_SERVICE_ROLE_KEY=YOUR_SERVICE_ROLE_KEY
 ```
 
-The Supabase project must contain the `public.live_data` table and a record with `device_id = 'Q-001'`.
+The Supabase database must already have the `public.live_data` table and the `Q-001` record. `supabase/schema.sql` documents the fresh-project setup; **do not run its reset statements on a working database**.
 
-### Run AI Detection
+**3. Detect mosquitoes and update Supabase**
 
-Place a sample mosquito photograph at:
-
-`backend/input/Q-001.jpg`
-
-Run the detection test:
+Place your test image at `backend/input/Q-001.jpg`, then run:
 
 ```bash
 python test_roboflow.py
+python mosquisense_worker.py
 ```
 
-Run the AI-to-Supabase integration:
+The first command tests detection and creates an annotated image. The second updates the latest Q-001 count in Supabase.
 
-```bash
-python mosquisense_worker.py --once
-```
+**4. Open the HTML Dashboard**
 
-The detected mosquito count will update device **Q-001** in the Supabase `live_data` table.
+Open `index.html` in a web browser to access the MosquiSense monitoring dashboard.
 
-### Open the Dashboard
+The dashboard connects directly to Supabase to retrieve the latest mosquito detection counts, temperature, humidity, and device information. Supabase Realtime enables the displayed information to update automatically whenever the database changes, with a 30-second refresh fallback.
 
-From the main project folder:
+An internet connection is required for Supabase connectivity. No physical mosquito killer or camera is required to demonstrate the dashboard.
 
-```bash
-python -m http.server 5500
-```
+## Prototype status and limitations
 
-Open `http://localhost:5500` in your browser.
-
-An internet connection is required for Supabase.
-
-## 5. Current Prototype Status
-
-| Component | Status |
+| Feature | Status |
 |---|---|
-| Interactive monitoring dashboard | Implemented |
-| Roboflow mosquito image detection | Implemented |
-| Python–Supabase integration | Tested successfully |
-| Q-001 database update | Working |
-| Physical mosquito killer | Concept design |
-| Automatic camera capture | Not implemented |
-| Multiple physical devices | Not implemented |
+| HTML monitoring dashboard connected to Supabase | Implemented |
+| Supabase Realtime and 30-second refresh fallback | Implemented in frontend |
+| Roboflow detection of a supplied photograph | Implemented |
+| Python update of Q-001 in Supabase | Tested successfully |
+| Automatic physical camera capture every five minutes | Not implemented |
+| Physical mosquito killer | Concept design only |
+| Multiple deployed mosquito-killer devices | Not implemented |
 
-**Note:** The current system detects mosquitoes in a manually supplied image. The detection count does not represent verified mosquito kills.
+ Future development will integrate the physical camera, automated image capture, unique-counting logic and field testing.
 
-## 6. Future Development
 
-Future improvements include integrating a physical camera, automatic image capture every five minutes, automated counting, and deployment of multiple mosquito-killer units.
-
-## 7. Security
-
-API credentials are stored in a local `.env` file, which must not be uploaded to GitHub.
-
-The Supabase service-role key is used only by the Python backend. Website users access the database through read-only frontend permissions.
-
----
-
-**MosquiSense — Academic Software Proof-of-Concept**
