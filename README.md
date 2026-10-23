@@ -25,19 +25,19 @@ The dashboard is built with **HTML, CSS and JavaScript** and connected to Supaba
 
 ```text
 MosquiSense/
-├── index.html                 # HTML monitoring dashboard
-├── map-data.js                # Map data
+├── index.html                   # HTML monitoring dashboard
+├── map-data.js                  # Map data
 ├── backend/
-│   ├── mosquisense_worker.py  # Roboflow detection → Supabase update
-│   ├── test_roboflow.py       # Detection test and annotated image
-│   ├── app.py                 # Flask detection API
+│   ├── mosquisense_worker.py    # Roboflow detection → Supabase update
+│   ├── test_roboflow.py         # Detection test and annotated image
+│   ├── app.py                   # Flask detection API
 │   ├── requirements.txt
-│   ├── .env.example           # Configuration template
-│   └── input/Q-001.jpg        # Manually provided sample image
+│   ├── .env.example             # Configuration template
+│   └── input/Q-001.jpg          # Manually provided sample image
 ├── firmware/MosquiSenseCode.ino #Arduino firmware for hardware control
-├── supabase/schema.sql        # Fresh-project database setup
-├── download_small_osm.py     # Map data download utility
-├── build_geofabrik.py        # Map data processing utility
+├── supabase/schema.sql          # Fresh-project database setup
+├── download_small_osm.py        # Map data download utility
+├── build_geofabrik.py           # Map data processing utility
 └── README.md
 ```
 
