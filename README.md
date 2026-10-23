@@ -78,6 +78,12 @@ The dashboard connects directly to Supabase to retrieve the latest mosquito dete
 
 An internet connection is required for Supabase connectivity. No physical mosquito killer or camera is required to demonstrate the dashboard.
 
+## Arduino Firmware (Hardware Control)
+
+The firmware/MosquiSenseCode.ino program is developed for the Arduino Mega 2560. It processes microphone signals to identify frequencies associated with mosquito wingbeats, controls the motor through an Electronic Speed Controller (ESC), displays operating information on an OLED screen and supports timed data reporting through serial communication.
+
+This firmware represents the hardware control component of the MosquiSense prototype.
+
 ## Prototype status and limitations
 
 | Feature | Status |
@@ -87,7 +93,7 @@ An internet connection is required for Supabase connectivity. No physical mosqui
 | Roboflow detection of a supplied photograph | Implemented |
 | Python update of Q-001 in Supabase | Tested successfully |
 | Automatic physical camera capture every five minutes | Not implemented |
-| Physical mosquito killer | Concept design only |
+| Physical mosquito killer | Scale down prototype |
 | Multiple deployed mosquito-killer devices | Not implemented |
 
  Future development will integrate the physical camera, automated image capture, unique-counting logic and field testing.
