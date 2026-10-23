@@ -1,6 +1,6 @@
 # MosquiSense — AI-Based Mosquito Monitoring System
 
-MosquiSense is a proposed solar-powered mosquito capture and monitoring product for public spaces. Its current **software prototype** combines a Roboflow mosquito detection workflow, a Python backend, a Supabase database and an interactive HTML dashboard.
+MosquiSense is a proposed solar-powered mosquito capture, detect and monitoring product for public spaces. Its current **software prototype** combines a Roboflow mosquito detection workflow, a Python backend, a Supabase database and an interactive HTML dashboard.
 
 ## How the system works
 
